@@ -5,19 +5,24 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "app": "nodemon api/app.js",
-    "start": "node api/app.js"
+    "app": "nodemon src/app.js",
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "commander": "^12.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
-    "nodemon": "^3.1.4"
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.4",
+    "zod": "^3.23.8"
   }
 }

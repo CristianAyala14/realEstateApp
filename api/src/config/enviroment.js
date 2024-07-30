@@ -1,17 +1,10 @@
 import dotenv from "dotenv";
-import {Command} from "commander";
 import __dirname from "./___dirname.js";
 import path from "path";
 
-//commander config
-const program = new Command();
-program.option("-mode <mode>", "Init mode", "dev")
-program.parse()
-const enviroment = program.opts();
-const pathEnviroment= enviroment.Mode === "prod"? path.join(__dirname, "../.env.prod") : path.join(__dirname, "../.env.dev")
 
 //dotenv config
-dotenv.config({path:pathEnviroment})
+dotenv.config({path:path.join(__dirname, "../.env.dev")})
 
 //enviroment object
 const PORT = process.env.PORT;
