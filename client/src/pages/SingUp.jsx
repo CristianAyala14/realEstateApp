@@ -5,9 +5,8 @@ import { useAuthContext } from '../contexts/authContext';
 
 export default function SingUp() {
 
-  const {singUp} = useAuthContext()
+  const {singUp, errors, loading} = useAuthContext()
   const [formData, setFormData] = useState({})
-
 
   const handleChange = (e)=>{
     setFormData({...formData,[e.target.id]: e.target.value})
@@ -32,7 +31,7 @@ export default function SingUp() {
 
         <input type="password" placeholder='password' className='border p-3 rounded-lg' id="password" onChange={handleChange}/>
 
-        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disable:opacity-80'>Sing Up</button>
+        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disable:opacity-80'>{loading ? "Loading..." : "Sing Up"}</button>
 
       </form>
       
@@ -42,6 +41,7 @@ export default function SingUp() {
           <span className='text-blue-700'>Sing In</span>
         </Link>
       </div>
+      {errors? <p className='text-red-500 mt-5'>{errors}</p> : ""}
     </div>
   )
 }

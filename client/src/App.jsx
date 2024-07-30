@@ -13,19 +13,21 @@ import { AuthContextProvider } from './contexts/authContext';
 
 export default function App() {
   return (
-    <AuthContextProvider>
-      <BrowserRouter>
-        <Header/>
-        <Routes>
-          <Route path='/' element={<Home/>}></Route>
-          <Route path='/sing-in' element={<SingIn/>}></Route>
-          <Route path='/sing-up' element={<SingUp/>}></Route>
-          <Route path='/about' element={<About/>}></Route>
-          <Route path='/profile' element={<Profile/>}></Route>
+    <BrowserRouter>
+      <AuthContextProvider>
+        
+          <Header/>
+          <Routes>
+            <Route path='/' element={<Home/>}></Route>
+            <Route path='/sing-in' element={<SingIn/>}></Route>
+            <Route path='/sing-up' element={<SingUp/>}></Route>
+            <Route path='/about' element={<About/>}></Route>
+            <Route path='/profile' element={<Profile/>}></Route>
 
-        </Routes>
-      </BrowserRouter>
-    </AuthContextProvider>
+          </Routes>
+      
+      </AuthContextProvider>
+    </BrowserRouter>
     
   )
 }
