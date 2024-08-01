@@ -3,36 +3,30 @@ import { singUpReq, singInReq } from "../apiCalls/authCalls.js";
 import Cookies from "js-cookie"
 import { useNavigate } from "react-router-dom";
 
+//redux
+import { useDispatch } from 'react-redux';
+import { singInStart, singInSuccess, singInFailure, errorStart } from '../redux/user/userSlice';
+
 const authContext = createContext();
 
 export const AuthContextProvider = ({children})=>{
-    const [user, setUser] = useState({})
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
-    const [errors, setErrors] = useState("")
-    const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
 
     const singUp = async (user) =>{
         try {
-            setErrors("");
-            setLoading(true)
+            dispatch(errorStart());
+            dispatch(singInStart());
             const res = await singUpReq(user);
             if(res.status === 200){
-                setUser(res.user)
-                setIsAuthenticated(true)
-                setErrors("");
-                setLoading(false)
+                dispatch(singInSuccess(res.user));
                 navigate("/")
             }
             if(res.status===400){
-                setErrors(res.data)
-                setUser({})
-                setIsAuthenticated(false);
-                setLoading(false)
+                dispatch(singInFailure(res.data));
             }
         } catch (error) {
-            setErrors("Network or other error.")
+            dispatch(singInFailure("Network or other error"))
             console.error("Network or other error:", error);
         }
 
@@ -40,35 +34,28 @@ export const AuthContextProvider = ({children})=>{
 
     const singIn = async (user) =>{
         try {
-            setErrors("");
-            setLoading(true)
+            dispatch(errorStart());
+            dispatch(singInStart());
 
             const res = await singInReq(user);
             if(res.status === 200){
-                setUser(res.user)
-                setIsAuthenticated(true)
-                setErrors("");
-                setLoading(false)
+                dispatch(singInSuccess(res.user));
                 navigate("/")
 
             }
             if(res.status===400){
-                setErrors(res.data)
-                setUser({})
-                setIsAuthenticated(false);
-                setLoading(false)
-
+                dispatch(singInFailure(res.data));
             }
             console.log(res)
         } catch (error) {
-            setErrors("Network or other error.")
+            dispatch(singInFailure("Network or other error"))
             console.error("Network or other error:", error);
         }
     }
 
 
     return (
-        <authContext.Provider value={{singUp, singIn, errors, loading, setLoading}}>
+        <authContext.Provider value={{singUp, singIn}}>
             {children}
         </authContext.Provider>
     )

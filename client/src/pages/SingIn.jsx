@@ -2,14 +2,13 @@ import React from 'react'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../contexts/authContext';
-//redux
-import { useDispatch } from 'react-redux';
-import { singInStart, singInSuccess, singInFailure } from '../redux/user/userSlice';
+import { useSelector } from 'react-redux';
 
 export default function SingIn() {
 
-  const {singIn, errors, loading} = useAuthContext()
+  const {singIn} = useAuthContext()
   const [formData, setFormData] = useState({})
+  const {loading, error} = useSelector((state)=> state.user)
 
 
   const handleChange = (e)=>{
@@ -44,7 +43,7 @@ export default function SingIn() {
           <span className='text-blue-700'>Sing Up</span>
         </Link>
       </div>
-      {errors? <p className='text-red-500 mt-5'>{errors}</p> : ""}
+      {error? <p className='text-red-500 mt-5'>{error}</p> : ""}
     </div>
   )
 }

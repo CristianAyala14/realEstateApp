@@ -2,11 +2,13 @@ import React from 'react'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../contexts/authContext';
+import { useSelector } from 'react-redux';
 
 export default function SingUp() {
 
-  const {singUp, errors, loading} = useAuthContext()
+  const {singUp} = useAuthContext()
   const [formData, setFormData] = useState({})
+  const {loading, error} = useSelector((state)=> state.user)
 
   const handleChange = (e)=>{
     setFormData({...formData,[e.target.id]: e.target.value})
@@ -41,7 +43,7 @@ export default function SingUp() {
           <span className='text-blue-700'>Sing In</span>
         </Link>
       </div>
-      {errors? <p className='text-red-500 mt-5'>{errors}</p> : ""}
+      {error? <p className='text-red-500 mt-5'>{error}</p> : ""}
     </div>
   )
 }

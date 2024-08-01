@@ -1,9 +1,11 @@
+//redux 3: CREAR la porcion de estado. 
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  currentUser: null,
+  user: null,
   error: null,
-  loading:false
+  loading:false,
+  isAuthenticated: false
 }
 
 const userSlice = createSlice({
@@ -13,18 +15,24 @@ const userSlice = createSlice({
     singInStart: (state)=>{
       state.loading = true
     },
-    singInSuccess: (state, action)=>{
-      state.currentUser = action.payload;
-      state.loading = false;
+    errorStart: (state)=>{
       state.error = null;
     },
-    singInFailure: (state, action)=>{
-      state.error = action.payload;
+    singInSuccess: (state, action)=>{
+      state.user = action.payload;
       state.loading = false;
       state.error = null;
+      state.isAuthenticated= true;
+    },
+    singInFailure: (state, action)=>{
+      state.user = null;
+      state.loading = false;
+      state.error = action.payload;
+      state.isAuthenticated= false;
+
     }
   }
 });
 
-export const {singInFailure, singInSuccess, singInStart} =userSlice.actions;
+export const {singInFailure, singInSuccess, singInStart, errorStart} =userSlice.actions;
 export default userSlice.reducer;
