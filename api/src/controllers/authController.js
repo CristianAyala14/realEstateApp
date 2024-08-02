@@ -26,7 +26,7 @@ class authController{
             }
 
             const token = generateToken(user)
-            res.cookie("authToken", token)
+            res.cookie("authToken", token, {httpOnly: true, secure: true, sameSite: 'Strict'})
 
             res.status(200).json({
             status: "success",
@@ -57,7 +57,7 @@ class authController{
                 email: validUser.email
             }
             const token = generateToken(user)
-            res.cookie("authToken", token)
+            res.cookie("authToken", token, {httpOnly: true, secure: true, sameSite: 'Strict'})
             res.status(200).json({
                 status: "success",
                 message: "Logged in succesfully.",

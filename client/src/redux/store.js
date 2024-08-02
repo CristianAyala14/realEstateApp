@@ -1,9 +1,17 @@
 //redux 1: CREAR EL STORE. 
-import {configureStore} from "@reduxjs/toolkit"
+import {combineReducers, configureStore} from "@reduxjs/toolkit"
 import userReducer from "./user/userSlice"
+import {persistReducer, persistStore} from "redux-persist";
+import storage from "redux-persist/lib/storage"
+import persistStore from "redux-persist/es/persistStore";
+
+const rootReducer = combineReducers({user: userReducer})//conbinas los reducers para su persistencia
+const persistConfig={key: "root", storage, version: 1} //creas la configuracion de persistencia
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
 
 export const store = configureStore({
-  reducer: {user: userReducer},
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware)=>
     getDefaultMiddleware({
       serializableCheck: false,
@@ -11,6 +19,7 @@ export const store = configureStore({
   
 })
 
+export const persistor = persistStore(store)
 
 /*
 ¡¡¡¡ R E D U X !!!! 
@@ -30,4 +39,7 @@ REDUX se compone de : STORE / ACTIONS / REDUCER
 
 Redux permiete tener un historial de tus acctions y actualizaciones de estado en tu aplicacion para hacer debbugin. La mejor manera de utilizar redux es mediante la biblioteca REDUX-toolkit
 facilita su instalacion, implementacion  y uso.. 
+
+
+Luego para guardar los datos de nuestra store modificada hay que hacerlo mediante REDUX PERSIST. ya que al refrescar la pag, todo lo que se guarda en la store se resetea
 */

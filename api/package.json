@@ -23,6 +23,7 @@
     "mongoose": "^8.5.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.4",
+    "redux-persist": "^6.0.0",
     "zod": "^3.23.8"
   }
 }
