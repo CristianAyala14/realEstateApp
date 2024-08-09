@@ -3,25 +3,47 @@ import { axiosCall } from "./axiosConfig";
 export async function singUpReq(user){
     try {
         const response = await axiosCall.post("/auth/singup", user)
-        return {status: response.status, data: response.data.message, user: response.data.payload};
+        return {status: response.status, data: response.data.message, user: response.data.payload, accessToken: response.data.accessToken};
     } catch (error) {
-        if (error.response) {
+        console.log(error)
+        //si viene error de servidor (axios hace que salte por este catch tanto si es error de servidor como si es de no coneccion)
+        //entonces hay que entender que objeto viene para desestructurarlo y enviarlo al front end prolijamente.
+        //eror servidor?
+        if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
-        } else {
-            throw error;
-        }  
+        //error no coneccion
+        }else{
+            return {status: error.response.status, data: "No server response."};
+        }
     }
 }
 
 export async function singInReq(user){
     try {
         const response = await axiosCall.post("/auth/singin", user)
-        return {status: response.status, data: response.data.message, user: response.data.payload};
+        return {status: response.status, data: response.data.message, user: response.data.payload, accessToken: response.data.accessToken};
     } catch (error) {
-        if (error.response) {
+        if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
-        } else {
-            throw error;
-        }  
+        }else{
+            return {status: error.response.status, data: "No server response."};
+        }
     }
 }
+
+export async function refreshTokenReq(){
+    try {
+        const response = await axiosCall.get("/auth/refresh")
+        return {status: response.status, data: response.data.message, user: response.data.payload, accessToken: response.data.accessToken};
+    } catch (error) {
+        if(error.response.data.message){
+            return {status: error.response.status, data: error.response.data.message};
+        }else{
+            return {status: error.response.status, data: "No server response."};
+        }
+    }
+}
+
+
+
+

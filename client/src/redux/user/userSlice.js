@@ -5,13 +5,21 @@ const initialState = {
   user: null,
   error: null,
   loading:false,
-  isAuthenticated: false
+  isAuthenticated: false,
+  accessToken: null
 }
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    defaultState: (state)=>{
+      state.user= null;
+      state.error= null;
+      state.loading=false;
+      state.isAuthenticated=false
+      state.accessToken=false
+    },
     singInStart: (state)=>{
       state.loading = true
     },
@@ -24,6 +32,10 @@ const userSlice = createSlice({
       state.error = null;
       state.isAuthenticated= true;
     },
+    setAccesToken:(state,action)=>{
+      state.accessToken = action.payload
+    }
+    ,
     singInFailure: (state, action)=>{
       state.user = null;
       state.loading = false;
@@ -34,5 +46,5 @@ const userSlice = createSlice({
   }
 });
 
-export const {singInFailure, singInSuccess, singInStart, errorStart} =userSlice.actions;
+export const {singInFailure, singInSuccess, singInStart, errorStart,defaultState, setAccesToken} =userSlice.actions;
 export default userSlice.reducer;

@@ -1,8 +1,23 @@
 import React from 'react'
 import {FaSearch} from "react-icons/fa"
 import {Link} from "react-router-dom"
+import { useDispatch } from 'react-redux';
+import { defaultState } from '../redux/user/userSlice';
+import { refreshTokenReq } from '../apiCalls/authCalls';
 
 export default function Header() {
+    const dispatch = useDispatch();
+
+    const logOut = ()=>{
+        dispatch(defaultState())
+    }
+
+    const refresh = async ()=>{
+        const res = await refreshTokenReq();
+        console.log(res)
+    }
+
+
     return (
     <header className='bg-slate-200 shadow-md'>
         <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
@@ -21,6 +36,8 @@ export default function Header() {
                 <Link to="/about"><li className='hidden sm:inline text-slate-700 hover:underline'>About</li></Link>
                 <Link to="/sing-in"><li className=' text-slate-700 hover:underline'>Sing In</li></Link>
                 <Link to="/sing-up"><li className=' text-slate-700 hover:underline'>Sing Up</li></Link>
+                <button onClick={()=> logOut()}>LogOut</button>
+                <button onClick={()=> refresh()}>refresh</button>
 
             </ul>
         </div>

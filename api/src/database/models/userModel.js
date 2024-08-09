@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const collection = "user"
 const userSchema = new mongoose.Schema({
-    username: {
+    userName: {
       type: String,
       required: true,
       trim: true //limpia espacios cuando se cargue el dato
