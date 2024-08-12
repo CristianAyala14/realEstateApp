@@ -1,22 +1,14 @@
 import React from 'react'
 import {FaSearch} from "react-icons/fa"
 import {Link} from "react-router-dom"
-import { useDispatch } from 'react-redux';
-import { defaultState } from '../redux/user/userSlice';
-import { refreshTokenReq } from '../apiCalls/authCalls';
+import { useSelector } from 'react-redux';
+import { useAuthContext } from '../contexts/authContext';
 
 export default function Header() {
-    const dispatch = useDispatch();
 
-    const logOut = ()=>{
-        dispatch(defaultState())
-    }
-
-    const refresh = async ()=>{
-        const res = await refreshTokenReq();
-        console.log(res)
-    }
-
+    const {logOut} = useAuthContext()
+    const isAuthenticated = useSelector((state)=>state.user.isAuthenticated)
+    
 
     return (
     <header className='bg-slate-200 shadow-md'>
@@ -37,7 +29,6 @@ export default function Header() {
                 <Link to="/sing-in"><li className=' text-slate-700 hover:underline'>Sing In</li></Link>
                 <Link to="/sing-up"><li className=' text-slate-700 hover:underline'>Sing Up</li></Link>
                 <button onClick={()=> logOut()}>LogOut</button>
-                <button onClick={()=> refresh()}>refresh</button>
 
             </ul>
         </div>

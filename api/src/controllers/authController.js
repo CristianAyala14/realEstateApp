@@ -29,7 +29,7 @@ class authController{
             const refreshToken = genRefreshToken(user)
             
 
-            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, sameSite: 'Lax', path: "/auth/refresh"})
+            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, sameSite: 'Lax', path: "/api/auth/refresh"})
 
             res.status(200).json({
             status: "success",
@@ -65,7 +65,7 @@ class authController{
             const accessToken = genAccessToken(user)
             const refreshToken = genRefreshToken(user)
 
-            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, sameSite: 'Lax', path: "/auth/refresh"})
+            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true, sameSite: 'Strict', path: "/api/auth/refresh"})
 
 
             res.status(200).json({
@@ -79,7 +79,13 @@ class authController{
             return res.status(500).json({message: error.message})
         }
     }
-
+    static logout = (req, res) => {
+        res.cookie("refreshToken", "", {httpOnly: true, secure: true, sameSite: 'Strict', path: "/api/auth/refresh", expires: new Date(0)})
+        res.status(200).json({
+            status: "success",
+            message: "Logged out successfully."
+        });
+    }
     static refreshToken = async(req,res)=>{
         const email = req.user.email
 
@@ -105,6 +111,14 @@ class authController{
         } catch (error) {
             return res.status(500).json({message: error.message})
         }
+    }
+    static rutaProtegida = async(req,res)=>{
+        const user = req.user
+        res.status(200).json({
+            status: "success",
+            message: `accediste a la ruta protegida y sos ${user.userName}`,
+        })
+
     }
 
 

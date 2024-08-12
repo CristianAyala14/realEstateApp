@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { envObject } from "../config/enviroment.js"
 
 export const genAccessToken = (user) => {
-  let token = jwt.sign(user, envObject.accessjwt.key, {expiresIn: "15m"} )
+  let token = jwt.sign(user, envObject.accessjwt.key, {expiresIn: "10m"} )
   return token
 }
 

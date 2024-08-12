@@ -1,11 +1,11 @@
 import {createContext, useState, useContext, useEffect} from "react";
-import { singUpReq, singInReq } from "../apiCalls/authCalls.js";
+import { singUpReq, singInReq , logOutReq} from "../apiCalls/authCalls.js";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 //redux
 import { useDispatch } from 'react-redux';
-import { singInStart, singInSuccess, singInFailure, errorStart,setAccesToken } from '../redux/user/userSlice';
+import { singInStart, singInSuccess, singInFailure, errorStart,setAccesToken, defaultState } from '../redux/user/userSlice';
 
 const authContext = createContext();
 
@@ -50,9 +50,16 @@ export const AuthContextProvider = ({children})=>{
         }
     }
 
+    const logOut = async () =>{
+        dispatch(defaultState());
+            const res = await logOutReq();
+            console.log(res)
+            navigate("/sing-in")
+    }
+
 
     return (
-        <authContext.Provider value={{singUp, singIn, error, loading}}>
+        <authContext.Provider value={{singUp, singIn, logOut, error, loading}}>
             {children}
         </authContext.Provider>
     )
