@@ -19,10 +19,12 @@ export default function App() {
         
           <Header/>
           <Routes>
+            {/* public routes */}
             <Route path='/' element={<Home/>}></Route>
-            <Route path='/sing-in' element={<SingIn/>}></Route>
-            <Route path='/sing-up' element={<SingUp/>}></Route>
+            <Route path='/sign-in' element={<SingIn/>}></Route>
+            <Route path='/sign-up' element={<SingUp/>}></Route>
             <Route path='/about' element={<About/>}></Route>
+            {/* private routes  */}
             <Route element={<ProtectedRoutes/>}>
               <Route path='/profile' element={<Profile/>}></Route>
             </Route>

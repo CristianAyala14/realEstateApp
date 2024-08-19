@@ -12,14 +12,11 @@ export const axiosCall = axios.create({
 })
 
 
-
 //calls que llevan el acces token para rutas protegidas en el backend
 export const axiosWithAuth = axios.create({
     baseURL: base_url,
     withCredentials: true,
 });
-
-
 // Interceptor para agregar el accessToken a las solicitudes
 axiosWithAuth.interceptors.request.use(
     (config) => {
@@ -35,7 +32,7 @@ axiosWithAuth.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-
+// Interceptor para rellamar a refresh token si recibe un 401.
 axiosWithAuth.interceptors.response.use(
     (response) => {
         // Si la respuesta es exitosa, simplemente la devuelve

@@ -20,6 +20,7 @@ export const AuthContextProvider = ({children})=>{
             dispatch(errorStart());
             dispatch(singInStart());
             const res = await singUpReq(user);
+            console.log(res)
             if (res.status === 200) {
                 dispatch(singInSuccess(res.user));
                 dispatch(setAccesToken(res.accessToken))
@@ -54,7 +55,7 @@ export const AuthContextProvider = ({children})=>{
         dispatch(defaultState());
             const res = await logOutReq();
             console.log(res)
-            navigate("/sing-in")
+            navigate("/sign-in")
     }
 
 

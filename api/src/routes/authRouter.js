@@ -11,5 +11,4 @@ router.post("/singup", schemaValidator(singUpSchema),authController.singUp )
 router.post("/singin", schemaValidator(singInSchema),authController.singIn )
 router.get("/logout", authController.logout)
 router.get("/refresh", validateRefreshToken, authController.refreshToken)
-router.get("/rutaprotegida", validateAccessToken , authController.rutaProtegida)
 export {router as authRouter};

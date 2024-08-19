@@ -2,15 +2,6 @@ import React from 'react'
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../contexts/authContext';
-//icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
-//validation regex in front
-
-
-
-
 
 
 
