@@ -1,8 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useAuthContext } from '../contexts/authContext';
-import { appFB } from '../firebaseConfig';
+import { app } from '../firebaseConfig';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Corregido el nombre de la función importada
+
+//firebase storage rules
+      // allow read;
+			// allow write: if 
+			// request.resource.size < 2* 1024 * 1024 && 
+			// request.resource.contentType.matches("image/.*")
+
+
+
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
@@ -12,10 +21,11 @@ export default function Profile() {
   // Estado para manejar la imagen, el progreso de subida y la URL de descarga
   const [img, setImg] = useState(null);
   const [imgPerc, setImgPerc] = useState(0);
-  const [URL, setURL] = useState(''); // Cambiado a string ya que solo se necesita una URL
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [formData, setFormData] = useState({});
 
   const uploadFile = (file) => {
-    const storage = getStorage(appFB);
+    const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, "profileImages/" + fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -26,37 +36,13 @@ export default function Profile() {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImgPerc(Math.round(progress));
 
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused.");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
-            break;
-        }
       },
       (error) => {
-        console.log(error);
-        switch (error.code) {
-          case "storage/unauthorized":
-            console.log("User doesn't have permission to access the object");
-            break;
-          case "storage/canceled":
-            console.log("User canceled the upload", error);
-            break;
-          case "storage/unknown":
-            console.log("Unknown error occurred", error);
-            break;
-          default:
-            break;
-        }
+        setFileUploadError(true);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("DownloadURL - ", downloadURL);
-          setURL(downloadURL); // Cambiado para solo almacenar la URL como una cadena
+          setFormData({...formData, profileImage: downloadURL}); // Cambiado para solo almacenar la URL como una cadena
         });
       }
     );
@@ -73,8 +59,7 @@ export default function Profile() {
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
       <form className='flex flex-col gap-4'>
-
-        <label htmlFor="img">Imagen:</label> {imgPerc > 0 && "Uploading: " + imgPerc + "%"}
+        
         <input
           type="file"
           id='img'
@@ -86,11 +71,24 @@ export default function Profile() {
         {user.user?.profileImage && ( // Comprobación de que profileImage existe
           <img
             onClick={() => fileRef.current.click()}
-            src={user.user.profileImage}
+            src={ formData.profileImage || user.user.profileImage}
             alt="profile"
             className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
           />
         )}
+  
+        <p>
+          { fileUploadError ? (
+              <span className='text-red-700'>Error uploading image. Image must be less than 2 mb</span>
+            ) : imgPerc > 0 && imgPerc < 100 ? (
+              <span className='text-green-700'>`Uploading ${imgPerc}%`</span>
+            ) : imgPerc === 100 ? (
+              <span className='text-green-700'>Image successfully uploaded!</span>
+            ) : (
+              ""
+            )
+          }
+         </p>
 
         <input type='text' placeholder='username' id='username' className="border p-3 rounded-lg" />
 

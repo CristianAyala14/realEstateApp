@@ -1,12 +1,12 @@
 import { initializeApp, getApps } from "firebase/app";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD0uYN94max9RueUwQdMhAmWNdKxf78zdk",
-    authDomain: "real-state-app-45a34.firebaseapp.com",
-    projectId: "real-state-app-45a34",
-    storageBucket: "real-state-app-45a34.appspot.com",
-    messagingSenderId: "137830447497",
-    appId: "1:137830447497:web:67e4cb6a13771537f24958"
-  };
+  apiKey: "AIzaSyAKuUQxG-FwohXOvMWi23RofX0K6WnraPc",
+  authDomain: "real-state-app-6dfe1.firebaseapp.com",
+  projectId: "real-state-app-6dfe1",
+  storageBucket: "real-state-app-6dfe1.appspot.com",
+  messagingSenderId: "794788335827",
+  appId: "1:794788335827:web:3a2346d6cc667c40014426"
+};
 
- export const appFB = initializeApp(firebaseConfig)
+ export const app = initializeApp(firebaseConfig)
