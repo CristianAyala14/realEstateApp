@@ -7,6 +7,7 @@ import morgan from "morgan";
 
 //route imports
 import { authRouter } from "./routes/authRouter.js";
+import { userRouter } from "./routes/userRouter.js";
 //app set
 const app = express()
 app.use(express.urlencoded({extended: true}));
@@ -19,6 +20,7 @@ app.use(morgan("dev"))
 ConnectDB();
 //routes
 app.use("/api/auth",authRouter)
+app.use("/api/user",userRouter)
 
 //server run
 const PORT = envObject.server.port

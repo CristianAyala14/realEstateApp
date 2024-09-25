@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 import { useAuthContext } from '../contexts/authContext';
 import { app } from '../firebaseConfig';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Corregido el nombre de la función importada
+import { updateUserReq } from '../apiCalls/authCalls';
 
 //firebase storage rules
       // allow read;
@@ -15,14 +18,20 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
+  const {error, loading}= useSelector((state)=> state.user)
+
+  const dispatch = useDispatch()
   const { logOut } = useAuthContext();
   const fileRef = useRef(null);
-
-  // Estado para manejar la imagen, el progreso de subida y la URL de descarga
   const [img, setImg] = useState(null);
   const [imgPerc, setImgPerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [updateUser, setUpdateUser] = useState({});
+  
+  console.log(updateUser)
+
+
+
 
   const uploadFile = (file) => {
     const storage = getStorage(app);
@@ -42,23 +51,43 @@ export default function Profile() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({...formData, profileImage: downloadURL}); // Cambiado para solo almacenar la URL como una cadena
+          setUpdateUser({...updateUser, profileImage: downloadURL}); // Cambiado para solo almacenar la URL como una cadena
         });
       }
     );
   };
 
+  const handleChange = (e)=>{
+    setUpdateUser({...updateUser, [e.target.id]: e.target.value})
+  }
+
+  const handleSubmit = async(e)=>{
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await updateUserReq(user.user.id, updateUser)
+      console.log(res)
+      
+    } catch (error) {
+      dispatch(updateUserFailure(error.message))
+    }
+    
+  }
+
   useEffect(() => {
     if (img) {
+      setFileUploadError(false)
       uploadFile(img); // Eliminar el segundo parámetro innecesario
       setImg(null)
     }
   }, [img]);
 
+  
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form className='flex flex-col gap-4'>
+      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         
         <input
           type="file"
@@ -68,35 +97,35 @@ export default function Profile() {
           accept="image/*"
           onChange={(e) => setImg(e.target.files[0])} // Cambiado onClick por onChange
         />
-        {user.user?.profileImage && ( // Comprobación de que profileImage existe
+        {
           <img
             onClick={() => fileRef.current.click()}
-            src={ formData.profileImage || user.user.profileImage}
+            src={ updateUser.profileImage || user.user.profileImage}
             alt="profile"
             className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
           />
-        )}
+        }
   
         <p>
           { fileUploadError ? (
               <span className='text-red-700'>Error uploading image. Image must be less than 2 mb</span>
             ) : imgPerc > 0 && imgPerc < 100 ? (
-              <span className='text-green-700'>`Uploading ${imgPerc}%`</span>
-            ) : imgPerc === 100 ? (
+              <span className='text-green-700'>Uploading:{imgPerc}%</span>
+            ) : imgPerc === 100  ? (
               <span className='text-green-700'>Image successfully uploaded!</span>
             ) : (
               ""
             )
           }
-         </p>
+        </p>
 
-        <input type='text' placeholder='username' id='username' className="border p-3 rounded-lg" />
+        <input type='text' placeholder='username' id='userName' className="border p-3 rounded-lg" defaultValue={user.user.userName} onChange={handleChange} />
 
-        <input type='email' placeholder='email' id='email' className="border p-3 rounded-lg" />
+        <input type='email' placeholder='email' id='email' className="border p-3 rounded-lg"  defaultValue={user.user.email} onChange={handleChange} />
 
-        <input type='password' placeholder='password' id='password' className="border p-3 rounded-lg" />
+        <input type='password' placeholder='password' id='password' className="border p-3 rounded-lg" onChange={handleChange} />
 
-        <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>Update</button>
+        <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>{loading ? "Loading..." : "Update"}</button>
 
       </form>
 

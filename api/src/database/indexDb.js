@@ -1,3 +1,3 @@
-import { authService } from "./services/authService.js";
+import { userService } from "./services/userService.js";
 
-export const authDao = new authService();
+export const userDao = new userService();

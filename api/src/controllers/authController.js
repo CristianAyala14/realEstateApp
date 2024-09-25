@@ -1,4 +1,4 @@
-import { authDao } from "../database/indexDb.js";
+import { userDao } from "../database/indexDb.js";
 import bcrypt from "bcryptjs";
 import {genAccessToken, genRefreshToken } from "../config/generateToken.js"
 
@@ -7,7 +7,7 @@ class authController{
         const {userName, email, password} = req.body;
         
         try {
-            const founded = await authDao.getBy(email);
+            const founded = await userDao.getBy(email);
             if(founded){
                 return res.status(400).json({message: "The user is already registered."})
             }
@@ -18,7 +18,7 @@ class authController{
                 email,
                 password: hash
             }
-            const created = await authDao.create(newUser)
+            const created = await userDao.create(newUser)
 
             //token auth
             const userAuthToken = {
@@ -55,7 +55,7 @@ class authController{
         const {email, password} = req.body;
         
         try {
-            const validUser = await authDao.getBy(email)
+            const validUser = await userDao.getBy(email)
             if(!validUser){
             return res.status(400).json({message: "Invalid email."})
             }
@@ -104,7 +104,7 @@ class authController{
         const email = req.user.email
 
         try {
-            const userFounded = await authDao.getBy(email)
+            const userFounded = await userDao.getBy(email)
             if(!userFounded) return res.status(401).json({message: "Could not refresh the access token. Access denied."})
 
             const user = {

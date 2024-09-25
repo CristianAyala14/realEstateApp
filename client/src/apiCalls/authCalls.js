@@ -70,3 +70,12 @@ export async function rutaProtegidaReq(){
         }
     }
 }
+
+export async function updateUserReq(id, updateUser){
+    try {
+        const response = await axiosWithAuth.post(`/user/update/${id}`, updateUser)
+        console.log(response)
+    } catch (error) {
+        
+    }
+}

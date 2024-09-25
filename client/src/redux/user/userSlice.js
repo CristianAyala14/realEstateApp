@@ -34,17 +34,28 @@ const userSlice = createSlice({
     },
     setAccesToken:(state,action)=>{
       state.accessToken = action.payload
-    }
-    ,
+    },
     singInFailure: (state, action)=>{
       state.user = null;
       state.loading = false;
       state.error = action.payload;
       state.isAuthenticated= false;
-
-    }
+    },
+    updateUserStart:(state)=>{
+      state.loading = true;
+    },
+    updateUserSuccess:(state, action)=>{
+      state.user = action.payload;
+      state.loading = false;
+      state.error = false;
+      state.isAuthenticated = true;
+    },
+    updateUserFailure: (state,action)=>{
+      state.error = action.payload;
+      state.loading = false;
+    },
   }
 });
 
-export const {singInFailure, singInSuccess, singInStart, errorStart,defaultState, setAccesToken} =userSlice.actions;
+export const {singInFailure, singInSuccess, singInStart, errorStart,defaultState, setAccesToken, updateUserStart,updateUserSuccess,updateUserFailure} =userSlice.actions;
 export default userSlice.reducer;
