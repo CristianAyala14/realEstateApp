@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 //redux
 import { useDispatch } from 'react-redux';
-import { singInStart, singInSuccess, singInFailure, errorStart,setAccesToken, defaultState } from '../redux/user/userSlice';
+import { singInStart, singInSuccess, singInFailure, errorStart,setAccessToken, defaultState } from '../redux/user/userSlice';
 
 const authContext = createContext();
 
@@ -23,7 +23,7 @@ export const AuthContextProvider = ({children})=>{
             console.log(res)
             if (res.status === 200) {
                 dispatch(singInSuccess(res.user));
-                dispatch(setAccesToken(res.accessToken))
+                dispatch(setAccessToken(res.accessToken))
                 navigate("/");
             } else {
                 dispatch(singInFailure(res.data));
@@ -41,7 +41,7 @@ export const AuthContextProvider = ({children})=>{
             console.log(res)
             if(res.status === 200){
                 dispatch(singInSuccess(res.user));
-                dispatch(setAccesToken(res.accessToken))
+                dispatch(setAccessToken(res.accessToken))
                 navigate("/")
             }else {
                 dispatch(singInFailure(res.data));

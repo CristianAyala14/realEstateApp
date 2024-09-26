@@ -35,7 +35,7 @@ export async function singInReq(user){
 export async function logOutReq(){
     try {
         const response = await axiosCall.get("/auth/logout")
-        return {status: response.status, data: response.data.message, user: response.data.payload, accessToken: response.data.accessToken};
+        return {status: response.status, data: response.data.message, user: response.data.payload};
     } catch (error) {
         if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
@@ -58,9 +58,10 @@ export async function refreshTokenReq(){
     }
 }
 
-export async function rutaProtegidaReq(){
+
+export async function updateUserReq(id, updateUser){
     try {
-        const response = await axiosWithAuth.get("/auth/rutaprotegida")
+        const response = await axiosWithAuth.post(`/user/update/${id}`, updateUser)
         return {status: response.status, data: response.data.message, user: response.data.payload, accessToken: response.data.accessToken};
     } catch (error) {
         if(error.response.data.message){
@@ -68,14 +69,5 @@ export async function rutaProtegidaReq(){
         }else{
             return {status: error.response.status, data: "No server response."};
         }
-    }
-}
-
-export async function updateUserReq(id, updateUser){
-    try {
-        const response = await axiosWithAuth.post(`/user/update/${id}`, updateUser)
-        console.log(response)
-    } catch (error) {
-        
     }
 }

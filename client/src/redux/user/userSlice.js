@@ -32,7 +32,7 @@ const userSlice = createSlice({
       state.error = null;
       state.isAuthenticated= true;
     },
-    setAccesToken:(state,action)=>{
+    setAccessToken:(state,action)=>{
       state.accessToken = action.payload
     },
     singInFailure: (state, action)=>{
@@ -47,7 +47,7 @@ const userSlice = createSlice({
     updateUserSuccess:(state, action)=>{
       state.user = action.payload;
       state.loading = false;
-      state.error = false;
+      state.error = null;
       state.isAuthenticated = true;
     },
     updateUserFailure: (state,action)=>{
@@ -57,5 +57,5 @@ const userSlice = createSlice({
   }
 });
 
-export const {singInFailure, singInSuccess, singInStart, errorStart,defaultState, setAccesToken, updateUserStart,updateUserSuccess,updateUserFailure} =userSlice.actions;
+export const {singInFailure, singInSuccess, singInStart, errorStart,defaultState, setAccessToken, updateUserStart,updateUserSuccess,updateUserFailure} =userSlice.actions;
 export default userSlice.reducer;

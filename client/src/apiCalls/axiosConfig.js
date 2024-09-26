@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { store } from '../redux/store.js'; // Importa tu store de Redux
-import { setAccesToken } from '../redux/user/userSlice.js';
+import { setAccessToken } from '../redux/user/userSlice.js';
 import { refreshTokenReq, } from './authCalls.js';
 const base_url = `http://localhost:3000/api`
 
@@ -46,7 +46,7 @@ axiosWithAuth.interceptors.response.use(
             try {
                 const res = await refreshTokenReq();
                 if (res.status === 200) {
-                    store.dispatch(setAccesToken(res.accessToken));
+                    store.dispatch(setAccessToken(res.accessToken));
                     axiosWithAuth.defaults.headers['Authorization'] = `Bearer ${res.accessToken}`;
                     return axiosWithAuth(originalRequest);
                 }
