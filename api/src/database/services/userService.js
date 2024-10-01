@@ -24,6 +24,11 @@ class userService{
         return updated;
 
     }
+
+    delete = async(id)=>{
+        const deleted = await userModel.findByIdAndDelete(id)
+        return deleted;
+    }
 }
 
 export {userService};

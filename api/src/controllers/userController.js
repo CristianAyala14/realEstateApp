@@ -4,7 +4,6 @@ import {genAccessToken, genRefreshToken } from "../config/generateToken.js"
 
 class userController{
     static updateUser = async(req,res)=>{
-        
         console.log(req.body)
         
         try {
@@ -13,7 +12,6 @@ class userController{
                 req.body.password = hash
             }
             const updated = await userDao.update(req.user.id, req.body)
-            console.log(updated)
 
             //auth token
             const newUserAuthToken = {
@@ -34,7 +32,7 @@ class userController{
                 email: updated.email,
                 profileImage: updated.profileImage
             }
-
+            console.log(user)
             res.status(200).json({
                 status: "success",
                 message: "User updated successfully.",
@@ -48,6 +46,21 @@ class userController{
 
         
 
+    }
+
+    static deleteUser = async(req,res)=>{
+        
+        try {
+            
+            const deleted = await userDao.delete(req.user.id)
+            res.status(200).json({
+                status: "success",
+                message: "User has been deleted.",
+            })
+
+        } catch (error) {
+            return res.status(500).json({message: error.message})
+        }
     }
 }
 

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { updateUserStart, updateUserSuccess, updateUserFailure, setAccessToken } from '../redux/user/userSlice';
+import { updateUserStart, updateUserSuccess, updateUserFailure, setAccessToken, deleteUserStart,
+  deleteUserSuccess, deleteUserFailure } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { useAuthContext } from '../contexts/authContext';
 import { app } from '../firebaseConfig';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { updateUserReq } from '../apiCalls/authCalls';
+import { updateUserReq, deleteUserReq } from '../apiCalls/userCalls';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +17,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
-  const { logOut, loading } = useAuthContext();
+  const { logOut, loading, error } = useAuthContext();
   const dispatch = useDispatch();
   const fileRef = useRef(null);
 
@@ -24,17 +25,15 @@ export default function Profile() {
   const [img, setImg] = useState(null);
   const [imgPerc, setImgPerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   // Validation states
   const [validUserName, setValidUserName] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
-  
   const [userNameFocus, setUserNameFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
-  
-  const [frontErrorMessage, setFrontErrorMessage] = useState("");
 
   // File upload logic
   const uploadFile = (file) => {
@@ -55,6 +54,7 @@ export default function Profile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setUpdateUser({ ...updateUser, profileImage: downloadURL });
+          console.log(updateUser)
         });
       }
     );
@@ -95,6 +95,7 @@ export default function Profile() {
       if (res.status === 200) {
         dispatch(updateUserSuccess(res.user));
         dispatch(setAccessToken(res.accessToken));
+        setUpdateSuccess(true);
       } else {
         dispatch(updateUserFailure(res.data));
       }
@@ -102,6 +103,21 @@ export default function Profile() {
       dispatch(updateUserFailure(error.message));
     }
   };
+
+  const deleteUser= async()=>{
+    try {
+      dispatch(deleteUserStart());
+      const res = await deleteUserReq(user.user.id);
+      if(res.status ===200){
+        dispatch(deleteUserSuccess(res.data))
+      }
+    } catch (error) {
+        dispatch(deleteUserFailure(error.message));
+    }
+    
+  }
+
+
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
@@ -202,8 +218,11 @@ export default function Profile() {
           8 to 16 characters. Must include uppercase and lowercase letters, a number, and a special character.
         </p>
 
-        {frontErrorMessage && (
-          <span className='text-red-500'>{frontErrorMessage}</span>
+        {error && (
+          <span className='text-red-500'>{error}</span>
+        )}
+         {updateSuccess && (
+          <span className='text-green-500'>User is updated successfully!</span>
         )}
 
         <button
@@ -213,7 +232,7 @@ export default function Profile() {
         </button>
       </form>
       <div className='flex justify-between mt-5'>
-        <button><span className='text-red-700 cursor-pointer'>Delete account</span></button>
+        <button onClick={() => deleteUser()}><span className='text-red-700 cursor-pointer'>Delete account</span></button>
         <button onClick={() => logOut()}><span className='text-red-700 cursor-pointer'>Sign out</span></button>
       </div>
     </div>
