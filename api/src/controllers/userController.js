@@ -53,6 +53,8 @@ class userController{
         try {
             
             const deleted = await userDao.delete(req.user.id)
+            res.cookie("refreshToken", "", {httpOnly: true, secure: true, sameSite: 'Strict', path: "/api/auth/refresh", expires: new Date(0)})
+
             res.status(200).json({
                 status: "success",
                 message: "User has been deleted.",

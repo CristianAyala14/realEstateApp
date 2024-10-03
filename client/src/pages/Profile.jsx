@@ -9,6 +9,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 import { updateUserReq, deleteUserReq } from '../apiCalls/userCalls';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
 
 // Regex validation rules
 const userNameRegex = /^[a-zA-Z][a-zA-Z0-9-_]{3,15}$/;
@@ -54,7 +55,6 @@ export default function Profile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setUpdateUser({ ...updateUser, profileImage: downloadURL });
-          console.log(updateUser)
         });
       }
     );
@@ -227,10 +227,15 @@ export default function Profile() {
 
         <button
           type="submit"
-          className='bg-teal-400 text-white font-bold p-3 mt-3 rounded-lg'>
-          {loading ? "Loading..." : "Save"}
+          className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'>
+          {loading ? "Loading..." : "Save User Changes"}
         </button>
+        <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create-listing"}>Create Listing</Link>
+
       </form>
+
+
+
       <div className='flex justify-between mt-5'>
         <button onClick={() => deleteUser()}><span className='text-red-700 cursor-pointer'>Delete account</span></button>
         <button onClick={() => logOut()}><span className='text-red-700 cursor-pointer'>Sign out</span></button>

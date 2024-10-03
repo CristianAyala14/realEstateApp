@@ -7,6 +7,7 @@ import SingUp from './pages/SingUp';
 import About from './pages/About';
 import Profile from './pages/Profile';
 import Header from './components/Header';
+import CreateListing from './pages/CreateListing';
 //components
 import ProtectedRoutes from './components/protectedRoutes';
 //contexts
@@ -27,6 +28,7 @@ export default function App() {
             {/* private routes  */}
             <Route element={<ProtectedRoutes/>}>
               <Route path='/profile' element={<Profile/>}></Route>
+              <Route path='/create-listing' element={<CreateListing/>}></Route>
             </Route>
 
           </Routes>

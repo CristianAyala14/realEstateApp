@@ -8,6 +8,8 @@ import morgan from "morgan";
 //route imports
 import { authRouter } from "./routes/authRouter.js";
 import { userRouter } from "./routes/userRouter.js";
+import { listingRouter } from "./routes/listingRouter.js";
+
 //app set
 const app = express()
 app.use(express.urlencoded({extended: true}));
@@ -21,7 +23,7 @@ ConnectDB();
 //routes
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
-
+app.use("api/listing", listingRouter )
 //server run
 const PORT = envObject.server.port
 app.listen(PORT, ()=>{
