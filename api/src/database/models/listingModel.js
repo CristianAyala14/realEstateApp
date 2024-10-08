@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const collection = "listing"
 const listingSchema = new mongoose.Schema({
-    listingName: {
+    name: {
       type: String,
       required: true,
       trim: true //limpia espacios cuando se cargue el dato

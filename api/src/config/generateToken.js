@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { envObject } from "../config/enviroment.js"
 
 export const genAccessToken = (user) => {
-  let token = jwt.sign(user, envObject.accessjwt.key, {expiresIn: "2m"} )
+  let token = jwt.sign(user, envObject.accessjwt.key, {expiresIn: "15m"} )
   return token
 }
 
@@ -12,7 +12,7 @@ export const checkAccessToken = (token) => {
 }
 
 export const genRefreshToken = (user) => {
-  let token = jwt.sign(user, envObject.refreshjwt.key, {expiresIn: "10m"} )
+  let token = jwt.sign(user, envObject.refreshjwt.key, {expiresIn: "59m"} )
   return token
 }
 
