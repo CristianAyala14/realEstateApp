@@ -12,7 +12,7 @@ class listingController{
             res.status(201).json({
                 status: "success",
                 message: "Listin created successfully.",
-                newListing: created
+                newListingId: created._id
             })
 
         } catch (error) {

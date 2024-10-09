@@ -5,7 +5,7 @@ import { axiosWithAuth } from "./axiosConfig";
 export async function createListingReq(newListing){
     try {
         const response = await axiosWithAuth.post("/listing/create", newListing)
-        return {status: response.status, data: response.data.message};
+        return {status: response.status, data: response.data.message, newListing: response.status.data.newListingId};
     } catch (error) {
         if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
