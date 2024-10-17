@@ -6,6 +6,10 @@ class listingService{
         const created = await listingModel.create(newListing);
         return created;
     } 
+    getUserListing = async(userId)=>{
+        const userListing = await listingModel.findById({userRef:userId})
+        return userListing;
+    }
 
     
 }

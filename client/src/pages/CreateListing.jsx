@@ -32,7 +32,6 @@ export default function CreateListing() {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
 
-  console.log(formData)
   const uploadImages = async(file)=>{
     return new Promise((resolve,reject)=>{
       const storage = getStorage(app);
@@ -95,13 +94,15 @@ export default function CreateListing() {
     try {
       if(formData.imageUrls.length<1) return setError("You must upload at least one image")
       if(+formData.regularPrice < +formData.discountPrice) return setError("Discount price must be lower than regular price.")
+      
       setError(false);
       setLoading(true);
       const res = await createListingReq(formData)
-      if(res===201){
-        
-        console.log(res)
-        
+
+      if(res.status===201){
+        setError(false);
+        setLoading(false); 
+        navigate(`/listings/${userId}`)       
       }
     } catch (error) {
       

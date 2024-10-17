@@ -29,6 +29,8 @@ class userService{
         const deleted = await userModel.findByIdAndDelete(id)
         return deleted;
     }
+
+   
 }
 
 export {userService};
