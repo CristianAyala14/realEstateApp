@@ -23,7 +23,7 @@ class listingController{
 
         const userId = req.user.id;
         console.log(userId)
-
+        
         try {
             const userListings = await listingDao.getUserListing(userId)
             res.status(200).json({
