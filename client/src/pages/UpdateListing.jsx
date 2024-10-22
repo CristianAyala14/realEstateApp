@@ -1,16 +1,17 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { app } from '../firebaseConfig'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-import { createListingReq } from '../apiCalls/listingCalls.js'
+import { getListingReq, updateUserListingReq } from '../apiCalls/listingCalls.js'
 import { useSelector } from 'react-redux';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 
-export default function CreateListing() {
+export default function UpdateListing() {
   const user = useSelector((state) => state.user);
   const userId = user.user.id;
   const navigate = useNavigate();
+  const params = useParams();
   const [files, setFiles] =useState([])
   const [formData, setFormData] =useState({
     imageUrls: [],
@@ -25,12 +26,34 @@ export default function CreateListing() {
     offer:false,
     parking:false,
     furnished:false,
-    userRef: userId
+    userRef: userId,
+    
   })
   const [uploading, setUploading] = useState(false)
   const [imageUploadError, setimageUploadError] = useState(false)
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
+
+
+  useEffect(()=>{
+    const fetchListing = async()=>{
+      const listingId = params.id;
+      try {
+        const res = await getListingReq(listingId);
+        if(res.status===200){
+          const listing = res.listing
+          setFormData(listing)
+          console.log(formData)
+        }
+      } catch (error) {
+        setError("Error aqui")
+      }
+    }
+    fetchListing();
+
+  },[params.id])
+
+
 
   const uploadImages = async(file)=>{
     return new Promise((resolve,reject)=>{
@@ -90,19 +113,20 @@ export default function CreateListing() {
 
   const handleSubmit = async(e)=>{
     e.preventDefault();
-    
+    const listingId = params.id;
+
     try {
       if(formData.imageUrls.length<1) return setError("You must upload at least one image")
       if(+formData.regularPrice < +formData.discountPrice) return setError("Discount price must be lower than regular price.")
       
       setError(false);
       setLoading(true);
-      const res = await createListingReq(formData)
+      const res = await updateUserListingReq(listingId,formData)
 
       if(res.status===201){
         setError(false);
         setLoading(false); 
-        navigate(`/listings/${res.newListingId}`)       
+        navigate(`/listings/${res.updatedListingId}`)       
       }
     } catch (error) {
       
@@ -113,7 +137,7 @@ export default function CreateListing() {
 
   return (
     <div className='p-3 max-w-4xl mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
+      <h1 className='text-3xl font-semibold text-center my-7'>Update Listing</h1>
         <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
           {/* left side */}
           <div className="flex flex-col flex-1 gap-4 ">
@@ -192,7 +216,7 @@ export default function CreateListing() {
               </div>
             ))}
             {error && <p className='text-red-700 text-sm'>{error}</p>}
-            <button disabled={loading || uploading} className='p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading? "Creating...": "Create Listing"}</button>
+            <button disabled={loading || uploading} className='p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading? "Updating...": "Update Listing"}</button>
           </div>
         </form>
     </div>

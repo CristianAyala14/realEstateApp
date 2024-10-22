@@ -7,7 +7,7 @@ import { useAuthContext } from '../contexts/authContext';
 import { app } from '../firebaseConfig';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { updateUserReq, deleteUserReq } from '../apiCalls/userCalls';
-import { getUserListingReq } from '../apiCalls/listingCalls';
+import { getUserListingReq, deleteUserListingReq, updateUserListingReq } from '../apiCalls/listingCalls';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
@@ -29,10 +29,10 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   
-  //show listings of user in his profile
+  //show  or delete listings of user in his profile
   const [showListingError, setShowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
-
+  const [deleteListingError, setDeleteListingError] = useState(false);
   // Validation states
   const [validUserName, setValidUserName] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
@@ -124,11 +124,9 @@ export default function Profile() {
 
   const handleShowListing = async()=>{
     try {
-      setShowListingError(true)
       const res = await getUserListingReq()
       if(res.status ===200){
         setShowListingError(false);
-        console.log(res)
         setUserListings(res.userListings)
 
         return;
@@ -138,6 +136,38 @@ export default function Profile() {
     } catch (error) {
       setShowListingError(true);
 
+    }
+  }
+
+  const handleDeleteUserListing = async(id)=>{
+    try {
+      const res = await deleteUserListingReq(id)
+      if(res.status ===200){
+        setDeleteListingError(false);
+        console.log(res)
+        setUserListings((prev)=>prev.filter((listing)=>{listing._id !== id}))
+        return;
+      }else{
+        setDeleteListingError(true);
+      }
+    } catch (error) {
+      setDeleteListingError(true);
+    }
+  }
+
+  const handleUpdateUserListing = async(listingId,updateData)=>{
+    try {
+      const res = await updateUserListingReq(listingId,updateData)
+      if(res.status ===200){
+        setDeleteListingError(false);
+        console.log(res)
+        setUserListings((prev)=>prev.filter((listing)=>{listing._id !== id}))
+        return;
+      }else{
+        setDeleteListingError(true);
+      }
+    } catch (error) {
+      setDeleteListingError(true);
     }
   }
 
@@ -254,7 +284,7 @@ export default function Profile() {
           className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'>
           {loading ? "Loading..." : "Save User Changes"}
         </button>
-        <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create"}>Create Listing</Link>
+        <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create-listing"}>Create Listing</Link>
 
       </form>
       <div className='flex justify-between mt-5'>
@@ -276,8 +306,8 @@ export default function Profile() {
                   <img src={listing.imageUrls[0]} alt="listing cover" className='h-16 w-16 object-contain' />
                 </Link>
                 <Link to={`/listings/${listing._id}`} className='flex-1 text-slate-700 font-semibold hover:underline truncate'><p>{listing.name}</p></Link>
-                <button className='text-red-700 uppercase'>Delete</button>
-                <button className='text-green-700 uppercase'>Edit</button>
+                <button onClick={()=>handleDeleteUserListing(listing._id)} className='text-red-700 uppercase'>Delete</button>
+                <Link to={`/update-listing/${listing._id}`}><button className='text-green-700 uppercase'>Edit</button></Link>
               </div>
             ))}
           </div>)

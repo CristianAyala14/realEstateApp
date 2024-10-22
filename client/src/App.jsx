@@ -8,7 +8,8 @@ import About from './pages/About';
 import Profile from './pages/Profile';
 import Header from './components/Header';
 import CreateListing from './pages/CreateListing';
-import UserListings from "./pages/userListings"
+import UserListings from "./pages/userListings";
+import UpdateListing from "./pages/UpdateListing";
 //components
 import ProtectedRoutes from './components/protectedRoutes';
 //contexts
@@ -26,12 +27,12 @@ export default function App() {
             <Route path='/sign-in' element={<SingIn/>}></Route>
             <Route path='/sign-up' element={<SingUp/>}></Route>
             <Route path='/about' element={<About/>}></Route>
+            <Route path='/listings/:id' element={<UserListings/>}></Route>
             {/* private routes  */}
             <Route element={<ProtectedRoutes/>}>
               <Route path='/profile' element={<Profile/>}></Route>
-              <Route path='/create' element={<CreateListing/>}></Route>
-              <Route path='/listings/:id' element={<UserListings/>}></Route>
-
+              <Route path='/create-listing' element={<CreateListing/>}></Route>
+              <Route path='/update-listing/:id' element={<UpdateListing/>}></Route>
             </Route>
 
           </Routes>

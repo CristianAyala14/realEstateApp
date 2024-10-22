@@ -10,6 +10,19 @@ class listingService{
         const userListing = await listingModel.find({userRef:userId})
         return userListing;
     }
+    getListing = async(id)=>{
+        const listing = await listingModel.findById(id)
+        return listing;
+    }
+    deleteListing = async(id)=>{
+        const deleted = await listingModel.findByIdAndDelete(id);
+        return deleted;
+    }
+
+    updateListing = async(id, updateData)=>{
+        const updated = await listingModel.findByIdAndUpdate(id, updateData, {new:true})
+        return updated;
+    }
 
     
 }
