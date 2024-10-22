@@ -7,7 +7,7 @@ class listingService{
         return created;
     } 
     getUserListing = async(userId)=>{
-        const userListing = await listingModel.findById({userRef:userId})
+        const userListing = await listingModel.find({userRef:userId})
         return userListing;
     }
 

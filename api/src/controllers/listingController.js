@@ -22,16 +22,21 @@ class listingController{
     static getUserListings = async(req,res)=>{
 
         const userId = req.user.id;
-        console.log(userId)
+        if(!userId){
+            res.status(400).json("Couldn`t get listing.")
+        }
         
         try {
             const userListings = await listingDao.getUserListing(userId)
+            if(!userListings){
+                console.log("no toma las listings del dao")
+            }
             res.status(200).json({
                 status: "success",
                 userListings: userListings
             })
         } catch (error) {
-            res.status(500).json({"Internal server error."})
+            res.status(500).json("Internal server error.")
         }
     }
 }

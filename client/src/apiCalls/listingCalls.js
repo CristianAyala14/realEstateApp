@@ -16,10 +16,10 @@ export async function createListingReq(newListing){
     }
 }
 
-export async function getUserListingReq(id){
+export async function getUserListingReq(){
     try {
-        const response = await axiosWithAuth.post(`/listings/${id}`)
-        return {status: response.status, data: response.data.message, newListing: response.data.newListingId};
+        const response = await axiosWithAuth.get(`/listings/userlisting`)
+        return {status: response.status, userListings: response.data.userListings};
     } catch (error) {
         if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
