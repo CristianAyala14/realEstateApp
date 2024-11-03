@@ -43,7 +43,6 @@ export default function UpdateListing() {
         if(res.status===200){
           const listing = res.listing
           setFormData(listing)
-          console.log(formData)
         }
       } catch (error) {
         setError("Error aqui")
@@ -123,7 +122,7 @@ export default function UpdateListing() {
       setLoading(true);
       const res = await updateUserListingReq(listingId,formData)
 
-      if(res.status===201){
+      if(res.status===200){
         setError(false);
         setLoading(false); 
         navigate(`/listings/${res.updatedListingId}`)       

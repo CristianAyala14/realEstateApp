@@ -62,7 +62,8 @@ export async function deleteUserListingReq(id){
 export async function updateUserListingReq(listingId,updateData){
     try {
         const response = await axiosWithAuth.post(`/listings/update/${listingId}`, updateData)
-        return {status: response.status, message: response.data.message, updatedListingId: updatedListingId};
+        console.log(response)
+        return {status: response.status, message: response.data.message, updatedListingId: response.data.updatedListingId};
     } catch (error) {
         if(error.response.data.message){
             return {status: error.response.status, data: error.response.data.message};
