@@ -155,22 +155,6 @@ export default function Profile() {
     }
   }
 
-  const handleUpdateUserListing = async(listingId,updateData)=>{
-    try {
-      const res = await updateUserListingReq(listingId,updateData)
-      if(res.status ===200){
-        setDeleteListingError(false);
-        console.log(res)
-        setUserListings((prev)=>prev.filter((listing)=>{listing._id !== id}))
-        return;
-      }else{
-        setDeleteListingError(true);
-      }
-    } catch (error) {
-      setDeleteListingError(true);
-    }
-  }
-
 
 
   return (

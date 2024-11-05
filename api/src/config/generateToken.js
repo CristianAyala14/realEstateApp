@@ -12,7 +12,7 @@ export const checkAccessToken = (token) => {
 }
 
 export const genRefreshToken = (user) => {
-  let token = jwt.sign(user, envObject.refreshjwt.key, {expiresIn: "59m"} )
+  let token = jwt.sign(user, envObject.refreshjwt.key, {expiresIn: "12h"} )
   return token
 }
 

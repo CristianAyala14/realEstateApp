@@ -49,6 +49,8 @@ axiosWithAuth.interceptors.response.use(
                     store.dispatch(setAccessToken(res.accessToken));
                     axiosWithAuth.defaults.headers['Authorization'] = `Bearer ${res.accessToken}`;
                     return axiosWithAuth(originalRequest);
+                }else if(res.status===401){
+                    store.dispatch(defaultState())
                 }
 
             } catch (refreshError) {
