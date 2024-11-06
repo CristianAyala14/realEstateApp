@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { getListingReq } from '../apiCalls/listingCalls';
 import {FaBed, FaBath, FaMapMarkedAlt, FaParking, FaChair} from "react-icons/fa"
 import { useSelector } from 'react-redux';
-
+import Contact from '../components/Contact';
 //slider . npm i swiper
 import {Swiper, SwiperSlide} from "swiper/react"
 import SwiperCore from "swiper"
@@ -14,12 +14,13 @@ import "swiper/css/bundle";
 export default function UserListings() { 
     //slider
     SwiperCore.use([Navigation]);
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
     const params = useParams();
     const [copied, setCopied] = useState(false)
+    const [contact, setContact] = useState(false)
     const [loading, setLoading] = useState(false)
     const [listing, setListing] = useState(false)
-    const [error, SetError] = useState(false)
+    const [error, setError] = useState(false)
 
     useEffect(()=>{
         const fetchListing = async()=>{
@@ -31,13 +32,12 @@ export default function UserListings() {
                 const objListing = res.listing
                 setListing(objListing)
                 setLoading(false)
-                SetError(false)
+                setError(false)
 
                 }
-                console.log(listing)
             } catch (error) {
                 setLoading(false)
-                SetError(true)
+                setError(true)
 
             }
         }
@@ -86,11 +86,10 @@ export default function UserListings() {
                     </li>
                 </ul>
                     {/* verifica que si yo soy usuario y quiero contactarme con otor, q no este contactandome conmigo mismo */}
-                {user.user && listing.userRef !== user.user.id && ( //tengo q pasar id por backend por q no lo tengo aca. 
-                    <h1>hola</h1>
-                )}
-                <button className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95'>Contact landlord</button>
-
+                {user && listing.userRef !== user.id && !contact &&( //tengo q pasar id por backend por q no lo tengo aca. 
+                    <button className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3 m-3' onClick={()=>setContact(true)}>Contact landlord</button>
+                )} 
+                {contact && <Contact listing={listing}/>}
 
                     
                 </>

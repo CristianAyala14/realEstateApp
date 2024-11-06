@@ -6,6 +6,11 @@ class userService{
         return founded;
     }
 
+    get = async(id)=>{
+        const founded = await userModel.findById(id);
+        return founded;
+    }
+
     create = async(user)=>{
         const created = await userModel.create(user);
         return created;

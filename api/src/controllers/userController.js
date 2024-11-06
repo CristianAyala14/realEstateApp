@@ -64,6 +64,24 @@ class userController{
         }
     }
 
+    static getUser = async(req,res)=>{
+        const id = req.params.id
+        try {
+            const user = await userDao.get(id)
+            console.log(user)
+            if(!user) return res.status(404).json("User not found.")
+            //no qremos dar la password asi q damos todo lo demas
+            const {password: pass, ...rest} = user._doc
+             res.status(200).json({
+                status: "success",
+                message: "User has been delivered.",
+                payload: rest
+            })
+        } catch (error) {
+            return res.status(500).json({message: error.message})
+        }
+    }
+
 }
 
 export {userController};

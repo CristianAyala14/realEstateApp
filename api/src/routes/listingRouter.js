@@ -8,5 +8,5 @@ router.get("/userlisting", validateAccessToken, listingController.getUserListing
 router.get("/delete/:id", validateAccessToken, listingController.deleteUserListing)
 router.post("/update/:id", validateAccessToken, listingController.editUserListing)
 router.get("/get/:id", listingController.getListing) //we don't need to verify because a listing is public, everyone should see it, also in the main page.
-
+router.get("/get", listingController.getAllListings)
 export {router as listingRouter};

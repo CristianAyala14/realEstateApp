@@ -27,3 +27,16 @@ export async function deleteUserReq(id){
       }
   }
 }
+
+export async function getUserReq(id){
+    try {
+        const response = await axiosWithAuth.get(`/user/${id}`)
+        return {status: response.status, data: response.data.message, user: response.data.payload};
+    } catch (error) {
+        if(error.response.data.message){
+            return {status: error.response.status, data: error.response.data.message};
+        }else{
+            return {status: error.response.status, data: "No server response."};
+        }
+    }
+  }
