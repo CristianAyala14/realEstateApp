@@ -3,8 +3,6 @@ import { getUserReq } from '../apiCalls/userCalls'
 import { Link } from 'react-router-dom'
 export default function Contact({listing}) {
   const [landlord, setLandlord] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
   const [message, setMessage] = useState("")
 
   const onChange = (e)=>{
@@ -25,7 +23,7 @@ export default function Contact({listing}) {
 
         }
       } catch (error) {
-        setError(true)
+        console.log(error)
       }
     }
     fetchUser();

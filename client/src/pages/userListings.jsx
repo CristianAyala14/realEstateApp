@@ -85,7 +85,7 @@ export default function UserListings() {
                         {listing.furnished === true ?  `Furnished` :  `Unfurnished` }
                     </li>
                 </ul>
-                    {/* verifica que si yo soy usuario y quiero contactarme con otor, q no este contactandome conmigo mismo */}
+                    {/* verifica que si yo soy usuario y quiero contactarme con otro, q no este contactandome conmigo mismo */}
                 {user && listing.userRef !== user.id && !contact &&( //tengo q pasar id por backend por q no lo tengo aca. 
                     <button className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3 m-3' onClick={()=>setContact(true)}>Contact landlord</button>
                 )} 
