@@ -10,6 +10,7 @@ import Header from './components/Header';
 import CreateListing from './pages/CreateListing';
 import UserListings from "./pages/userListings";
 import UpdateListing from "./pages/UpdateListing";
+import Search from './pages/Search';
 //components
 import ProtectedRoutes from './components/protectedRoutes';
 //contexts
@@ -27,6 +28,7 @@ export default function App() {
             <Route path='/sign-in' element={<SingIn/>}></Route>
             <Route path='/sign-up' element={<SingUp/>}></Route>
             <Route path='/about' element={<About/>}></Route>
+            <Route path='/search' element={<Search/>}></Route>
             <Route path='/listings/:id' element={<UserListings/>}></Route>
             {/* private routes  */}
             <Route element={<ProtectedRoutes/>}>

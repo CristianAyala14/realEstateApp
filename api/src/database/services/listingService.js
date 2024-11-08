@@ -24,6 +24,18 @@ class listingService{
         return updated;
     }
 
+    getAllListings = async(filter, options)=>{
+        try {
+            const listings = await listingModel.paginate(
+                filter,
+                options
+            );
+            return listings;
+        } catch (error) {
+            return "Error en la ejecucion.";
+        }
+    }
+
     
 }
 

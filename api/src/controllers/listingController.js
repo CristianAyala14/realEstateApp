@@ -145,7 +145,9 @@ class listingController {
         try {
             const limit = parseInt(req.query.limit) || 9;
             const startIndex = parseInt(req.query.startIndex) || 0;
+            
             //ver esto que no entiendo. 
+            
             let offer = req.query.offer;
             if(offer === undefined || offer === "false"){
                 offer = { $in : [false,true]};
@@ -172,7 +174,9 @@ class listingController {
                 furnished,
                 parking,
                 type
-            }).sort({[sort]: order}).limit(limit).skip(startIndex);
+            }).sort({[sort]: order})
+            .limit(limit)
+            .skip(startIndex);
             
             return res.status(200).json({
                 status: "success",
@@ -181,7 +185,7 @@ class listingController {
 
 
         } catch (error) {
-            
+            return res.status(500).json("Internal server error.");
         }
     }
 }

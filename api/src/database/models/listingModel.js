@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import mongoosePaginate from "mongoose-paginate-v2"
 const collection = "listing"
 const listingSchema = new mongoose.Schema({
     name: {
@@ -58,6 +58,8 @@ const listingSchema = new mongoose.Schema({
     
 
 }, {timestamps:true})
+
+listingSchema.plugin(mongoosePaginate)
 
 const listingModel = mongoose.model(collection, listingSchema)
 export default listingModel;
