@@ -32,7 +32,7 @@ export default function Profile() {
   //show  or delete listings of user in his profile
   const [showListingError, setShowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
-  const [deleteListingError, setDeleteListingError] = useState(false);
+  const [errorNetwork, setErrorNetwork] = useState(false);
   // Validation states
   const [validUserName, setValidUserName] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
@@ -126,15 +126,15 @@ export default function Profile() {
     try {
       const res = await getUserListingReq()
       if(res.status ===200){
+        setErrorNetwork(false);
         setShowListingError(false);
         setUserListings(res.userListings)
-
         return;
-      }else{
+      }else if(res.status === 404){
         setShowListingError(true);
       }
     } catch (error) {
-      setShowListingError(true);
+      setErrorNetwork(true);
 
     }
   }
@@ -279,7 +279,7 @@ export default function Profile() {
         {/* listing shown below the user profile */}
         <button onClick={handleShowListing} className='text-green-700 w-full font-bold'>Show your listings</button>
         {showListingError && (
-          <p className='text-red-700 mt-5'>Error showing listings</p>
+          <p className='text-red-700 mt-5'>No listings.</p>
         )}
         {userListings && userListings.length > 0 && 
           (<div className='flex flex-col gap-4'>

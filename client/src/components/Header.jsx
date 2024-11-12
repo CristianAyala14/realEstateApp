@@ -9,6 +9,15 @@ export default function Header() {
     const user = useSelector((state)=>state.user)
     const [searchTerm, setSearchTerm] = useState("")
     const navigate = useNavigate()
+
+
+    useEffect(()=>{
+        const urlParams = new URLSearchParams(location.search)
+        const searchTermFromUrl = urlParams.get("searchTerm")
+        if(searchTermFromUrl){
+            setSearchTerm(searchTermFromUrl)
+        }
+    },[location.search])
     
     const handleSubmit = (e) =>{
         e.preventDefault();
@@ -17,14 +26,6 @@ export default function Header() {
         const searchQuery = urlParams.toString();
         navigate(`/search?${searchQuery}`);
     }   
-    
-    useEffect(()=>{
-        const urlParams = new URLSearchParams(location.search)
-        const searchTermFromUrl = urlParams.get("searchTerm")
-        if(searchTermFromUrl){
-            setSearchTerm(searchTermFromUrl)
-        }
-    },[location.search])
     
     return (
         <header className='bg-slate-200 shadow-md'>
