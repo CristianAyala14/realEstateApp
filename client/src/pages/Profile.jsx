@@ -33,6 +33,8 @@ export default function Profile() {
   const [showListingError, setShowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
   const [errorNetwork, setErrorNetwork] = useState(false);
+  const [deleteListingError, setDeleteListingError] = useState(false);
+
   // Validation states
   const [validUserName, setValidUserName] = useState(false);
   const [validEmail, setValidEmail] = useState(false);

@@ -1,9 +1,10 @@
 import {FaSearch} from "react-icons/fa"
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useNavigate, useLocation } from "react-router-dom"
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
+    const location = useLocation();  // Aquí definimos location con useLocation()
 
     const isAuthenticated = useSelector((state)=>state.user.isAuthenticated)
     const user = useSelector((state)=>state.user)
@@ -21,7 +22,7 @@ export default function Header() {
     
     const handleSubmit = (e) =>{
         e.preventDefault();
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(location.search);
         urlParams.set("searchTerm", searchTerm)
         const searchQuery = urlParams.toString();
         navigate(`/search?${searchQuery}`);

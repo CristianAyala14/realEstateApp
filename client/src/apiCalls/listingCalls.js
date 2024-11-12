@@ -76,6 +76,7 @@ export async function updateUserListingReq(listingId,updateData){
 
 
 export async function searchListingReq(searchQuery){
+    console.log(searchQuery)
     try {
         const response = await axiosCall.get(`/listings/get?${searchQuery}`)
         return {status: response.status, listings: response.data.listings};

@@ -142,58 +142,65 @@ class listingController {
     }
 
     static getAllListings = async (req, res) => {
+        console.log(req.query);
 
-        try {
-            // Obtener los parámetros de la query con valores predeterminados
-            const limit = req.query.limit? parseInt(req.query.limit) : 9; 
-            const page = req.query.page? parseInt(req.query.page) : 1; 
-            console.log(req.query)
-            let { searchTerm, type, parking, furnished, offer, sort, order } = req.query;
+        let { searchTerm, type, parking, furnished, offer, sort, order, limit, page } = req.query;
     
-            // Configuración de filtros flexibles
+        // Valores predeterminados
+        limit = limit ? parseInt(limit) : 15; 
+        page = page ? parseInt(page) : 1;
+    
+        try {
+            // Filtros de búsqueda flexibles
             offer = offer === "true" ? true : offer === "false" ? false : { $in: [true, false] };
             furnished = furnished === "true" ? true : furnished === "false" ? false : { $in: [true, false] };
             parking = parking === "true" ? true : parking === "false" ? false : { $in: [true, false] };
-            type = type && type !== "all" ? type : { $in: ["sale", "rent"] };  // Asegurar que 'type' sea válido
+            type = type && type !== "all" ? type : { $in: ["sale", "rent"] };
     
             // Filtro de búsqueda
             let filter = {
-                name: { $regex: searchTerm, $options: "i" }, // Búsqueda flexible (case-insensitive)
+                name: { $regex: searchTerm || "", $options: "i" },
                 offer,
                 furnished,
                 parking,
                 type
             };
     
-            // Validar sort y order, asegurando que sean valores válidos
-            sort = sort && ["createdAt", "regularPrice"].includes(sort) ? sort : "createdAt";  // Ordenar por 'createdAt' por defecto
-            order = order && ["asc", "desc"].includes(order) ? order : "desc";  // 'desc' por defecto
+            // Validación y configuración de sort y order
+            sort = sort && ["createdAt", "regularPrice"].includes(sort) ? sort : "createdAt";
+            order = order && ["asc", "desc"].includes(order) ? order : "desc";
     
             // Opciones de paginación y orden
             const options = {
-                page,
                 limit,
-                sort: { [sort]: order }  // Ordenar según el valor de 'sort' y 'order'
+                page,
+                sort: { [sort]: order },
+                lean: true
             };
     
-            // Consulta a la base de datos con paginación y filtros
+            // Logs de depuración
+            console.log("Filter:", filter);
+            console.log("Options:", options);
+    
+            // Consulta a la base de datos
             const listings = await listingDao.getAllListings(filter, options);
+            console.log("Listings count:", listings.docs.length);
             
-            // Responder con los resultados de la consulta
             return res.status(200).json({
                 status: "success",
-                listings
+                listings: listings.docs,
+                totalPages: listings.totalPages,
+                currentPage: listings.page
             });
     
         } catch (error) {
-            // Manejo de errores con más detalles
-            console.error(error);  // Imprimir error en consola para depuración
+            console.error(error);
             return res.status(500).json({
                 status: "error",
                 message: error.message || "Internal server error."
             });
         }
-    }
+    };
 }
 
 export { listingController };

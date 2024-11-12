@@ -16,7 +16,6 @@ export default function UserListings() {
     SwiperCore.use([Navigation]);
     const user = useSelector((state) => state.user.user);
     const params = useParams();
-    const [copied, setCopied] = useState(false)
     const [contact, setContact] = useState(false)
     const [loading, setLoading] = useState(false)
     const [listing, setListing] = useState(false)
@@ -68,7 +67,7 @@ export default function UserListings() {
                         <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 m-3 rounded-md'>${listing.regularPrice - listing.discountPrice} Less Offer</p>
                     )}
                 </div>
-
+                
                 <p className='text-slate-800 p-1 m-3'><span className='font-semibold text-black '>Description - </span> {listing.description}</p>
                 
                 <ul className='text-green-900 font-semibold text-sm flex m-3 items-center gap-4 sm:gap-6 flex-wrap'>

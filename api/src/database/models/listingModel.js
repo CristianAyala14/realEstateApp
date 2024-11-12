@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2"
-const collection = "listing"
+
+const collection = "listing";
 const listingSchema = new mongoose.Schema({
     name: {
       type: String,
