@@ -140,67 +140,55 @@ class listingController {
             return res.status(500).json("Internal server error.");
         }
     }
-
+    
     static getAllListings = async (req, res) => {
         console.log(req.query);
-
+    
         let { searchTerm, type, parking, furnished, offer, sort, order, limit, page } = req.query;
-    
-        // Valores predeterminados
-        limit = limit ? parseInt(limit) : 15; 
-        page = page ? parseInt(page) : 1;
-    
+
         try {
-            // Filtros de búsqueda flexibles
+            // Convertir los valores de los filtros booleanos a true/false o incluir todos los valores si no se especifican
             offer = offer === "true" ? true : offer === "false" ? false : { $in: [true, false] };
             furnished = furnished === "true" ? true : furnished === "false" ? false : { $in: [true, false] };
             parking = parking === "true" ? true : parking === "false" ? false : { $in: [true, false] };
+            // Si type es "all", se permiten ambos valores "sale" y "rent"
             type = type && type !== "all" ? type : { $in: ["sale", "rent"] };
     
-            // Filtro de búsqueda
+            // Construcción del filtro de búsqueda flexible usando searchTerm y los otros filtros
             let filter = {
-                name: { $regex: searchTerm || "", $options: "i" },
+                name: { $regex: searchTerm || "", $options: "i" }, // Búsqueda por nombre, sin distinción de mayúsculas
                 offer,
                 furnished,
                 parking,
                 type
             };
-    
-            // Validación y configuración de sort y order
             sort = sort && ["createdAt", "regularPrice"].includes(sort) ? sort : "createdAt";
             order = order && ["asc", "desc"].includes(order) ? order : "desc";
-    
-            // Opciones de paginación y orden
-            const options = {
-                limit,
-                page,
-                sort: { [sort]: order },
+                const options = {
+                limit: (parseInt(limit) > 0) ? parseInt(limit) : 15,
+                page: (parseInt(page) > 0) ? parseInt(page) : 1,
+                sort: { [sort]: order === "asc" ? 1 : -1 },
                 lean: true
             };
     
-            // Logs de depuración
+            // Logs de depuración para verificar filtros y opciones antes de la consulta
             console.log("Filter:", filter);
             console.log("Options:", options);
-    
-            // Consulta a la base de datos
             const listings = await listingDao.getAllListings(filter, options);
-            console.log("Listings count:", listings.docs.length);
-            
+            // Respuesta exitosa con los datos paginados y detalles de paginación
             return res.status(200).json({
                 status: "success",
-                listings: listings.docs,
-                totalPages: listings.totalPages,
-                currentPage: listings.page
+                listings
             });
     
         } catch (error) {
-            console.error(error);
             return res.status(500).json({
                 status: "error",
                 message: error.message || "Internal server error."
             });
         }
     };
+    
 }
 
 export { listingController };
