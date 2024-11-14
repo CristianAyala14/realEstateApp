@@ -57,7 +57,7 @@ const listingSchema = new mongoose.Schema({
 
 },{timestamps:true})
 
-listingModel.plugin(mongoosePaginate)
+listingSchema.plugin(mongoosePaginate)
 
 const listingModel = mongoose.model(collection, listingSchema);
 

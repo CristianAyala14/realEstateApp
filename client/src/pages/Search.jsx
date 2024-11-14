@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { searchListingReq } from "../apiCalls/listingCalls";
 import ListingItem from '../components/listingItem';
-import {Link, useNavigate, } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 
-
-export default function Search(){
-    const navigate = useNavigate()
+export default function Search() {
+    const navigate = useNavigate();
     const [listings, setListings] = useState([]);
-    const [totalPages, setTotalPages] = useState(1);
-    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
         searchTerm: "",
@@ -18,96 +15,107 @@ export default function Search(){
         offer: false,
         sort: "createdAt",
         order: "desc",
-        limit: 15,
-        page: 1
     });
 
+    useEffect(()=>{
+        const urlParams = new URLSearchParams(location.search)
 
-    const fetchListings = async () => {
-        setLoading(true);
-        const searchQuery = new URLSearchParams(filters).toString();
-        try {
-            const res = await searchListingReq(searchQuery);
-            if (res.status === 200) {
-                console.log(res)
-            } else {
-                console.error("Error fetching listings", res.status);
-            }
-        } catch (error) {
-            console.error("Error fetching listings:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFilterChange = (e) => {
-      if (e.target.id === "all" || e.target.id === "rent" || e.target.id === "sale") {
-        setFilters({ ...filters, type: e.target.id });
-      }
-  
-      if (e.target.id === "searchTerm") {
-        setFilters({ ...filters, searchTerm: e.target.value });
-      }
-  
-      if (e.target.id === "parking" || e.target.id === "furnished" || e.target.id === "offer") {
-        setFilters({
-          ...filters,
-          [e.target.id]: e.target.checked || e.target.checked === "true" ? true : false
-        });
-      }
-  
-      if (e.target.id === "sort_order") {
-        const [sort, order] = e.target.value.split("_");
-        setFilters({ ...filters, sort: sort || "createdAt", order: order || "desc" });
-      }
-    };
-
-    useEffect(() => {
-        const urlParams = new URLSearchParams(location.search);
         const searchTermFromUrl = urlParams.get("searchTerm");
         const typeFromUrl = urlParams.get("type");
         const parkingFromUrl = urlParams.get("parking");
         const furnishedFromUrl = urlParams.get("furnished");
         const offerFromUrl = urlParams.get("offer");
         const sortFromUrl = urlParams.get("sort");
-        const orderFromUrl = urlParams.get("order");
+        const orderFromUrl = urlParams.get("order");   
+        
+        //esto pasara asincronicamente, dsp q cargue la vista.
+        if(
+            searchTermFromUrl ||
+            typeFromUrl ||
+            parkingFromUrl ||
+            furnishedFromUrl ||
+            offerFromUrl ||
+            sortFromUrl ||
+            orderFromUrl 
+        ){
+            setFilters({
+                searchTerm: searchTermFromUrl || "",
+                type: typeFromUrl || "all",
+                parking: parkingFromUrl === "true"? true: false,
+                furnished: furnishedFromUrl === "true"? true: false,
+                offer: offerFromUrl === "true"? true: false,
+                sort: sortFromUrl ||"createdAt",
+                order:  orderFromUrl || "desc",  
+            });
+        }
+        
+
+        // aqui se hara la llamada al backend desde la url en el momento que carga la vista
+        const fetchListings = async () => {
+            setLoading(true);
+      
+            try {
+              const searchQuery = urlParams.toString();
+              const res = await searchListingReq(searchQuery);
+              if (res.status === 200) {
+                setLoading(false);
+                console.log(res);
+                setListings(res.listings.docs)
+              }
+            } catch (error) {
+              setLoading(false);
+            }
+          };
+
+          fetchListings();
     
-        setFilters(prevData => ({
-          ...prevData,
-          searchTerm: searchTermFromUrl || "",
-          type: typeFromUrl || "all",
-          parking: parkingFromUrl === "true"? true : false,
-          furnished: furnishedFromUrl === "true" ? true : false,
-          offer: offerFromUrl === "true" ? true : false,
-          sort: sortFromUrl || "createdAt",  
-          order: orderFromUrl || "desc",
-          limit: parseInt(urlParams.get("limit")) || 9,
-          page: parseInt(urlParams.get("page")) || 1
-        }));
     
-        fetchListings();
-      }, [location.search]);
+    },[location.search]);
+
+    
+
+    
 
 
+    // Función de actualización de objeto filters desde formulario frontend
+    const handleFilterChange = (e) => {
+        if (e.target.id) {
+            setFilters({ ...filters, type: e.target.id });
+        } 
+        if(e.target.id === "searchTerm") {
+            setFilters({ ...filters, searchTerm: e.target.value });
+        }
+        if(["parking", "furnished", "offer"].includes(e.target.id)) {
+            setFilters({
+                ...filters,
+                [e.target.id]: e.target.checked || e.target.checked === "true"? true : false
+            });
+        }
+        if (e.target.id === "sort_order") {
+            const sort = e.target.value.split("_")[0] || "createdAt"
+            const order = e.target.value.split("_")[1] || "desc";
+            setFilters({ ...filters, sort, order});
+        }
+    };
+    // Submit form
     const handleSubmit = (e) => {
         e.preventDefault();
-        const urlParams = new URLSearchParams(location.search);
-        urlParams.set("searchTerm", filters.searchTerm);
-        urlParams.set("type", filters.type);
-        urlParams.set("parking", filters.parking);
-        urlParams.set("furnished", filters.furnished);
-        urlParams.set("offer", filters.offer);
-        urlParams.set("sort", filters.sort);
-        urlParams.set("order", filters.order);
+        const urlParams = new URLSearchParams()
+        urlParams.set("searchTerm", filters.searchTerm)
+        urlParams.set("type", filters.type)
+        urlParams.set("parking", filters.parking)
+        urlParams.set("furnished", filters.furnished)
+        urlParams.set("offer", filters.offer)
+        urlParams.set("sort", filters.sort)
+        urlParams.set("order", filters.order)
         const searchQuery = urlParams.toString();
-        navigate(`/search?${searchQuery}`);
-      };
+        navigate(`/search?${searchQuery}`)
+    };
 
     return (
         <div className="flex flex-col md:flex-row">
             <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-                    {/* Search Term */}
                     <div className="flex items-center gap-2">
                         <label className="whitespace-nowrap font-semibold">Search Term:</label>
                         <input
@@ -120,12 +128,11 @@ export default function Search(){
                         />
                     </div>
 
-                    {/* Type Filters */}
                     <div className="flex gap-2 flex-wrap items-center">
                         <label className="font-semibold">Type:</label>
                         <div className="flex gap-2">
                             <input
-                                type="radio"
+                                type="checkbox"
                                 id="all"
                                 className="w-5"
                                 value="all"
@@ -136,7 +143,7 @@ export default function Search(){
                         </div>
                         <div className="flex gap-2">
                             <input
-                                type="radio"
+                                type="checkbox"
                                 id="rent"
                                 className="w-5"
                                 value="rent"
@@ -147,7 +154,7 @@ export default function Search(){
                         </div>
                         <div className="flex gap-2">
                             <input
-                                type="radio"
+                                type="checkbox"
                                 id="sale"
                                 className="w-5"
                                 value="sale"
@@ -158,7 +165,6 @@ export default function Search(){
                         </div>
                     </div>
 
-                    {/* Amenities Filters */}
                     <div className="flex gap-2 flex-wrap items-center">
                         <label className="font-semibold">Amenities:</label>
                         <div className="flex gap-2">
@@ -183,7 +189,20 @@ export default function Search(){
                         </div>
                     </div>
 
-                    {/* Sort and Order */}
+                    <div className="flex gap-2 flex-wrap items-center">
+                        <label className="font-semibold">Offer:</label>
+                        <div className="flex gap-2">
+                            <input
+                                type="checkbox"
+                                id="offer"
+                                className="w-5"
+                                onChange={handleFilterChange}
+                                checked={filters.offer}
+                            />
+                            <span>Offer</span>
+                        </div>
+                    </div>
+
                     <div className="flex items-center gap-2">
                         <label className="font-semibold">Sort:</label>
                         <select
@@ -205,6 +224,7 @@ export default function Search(){
                 </form>
             </div>
 
+            {/* resultados de busqueda */}
             <div className="flex-1">
                 <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">Listing Results:</h1>
                 <div className="p-7 flex flex-wrap gap-4">
@@ -218,29 +238,7 @@ export default function Search(){
                         ))
                     )}
                 </div>
-
-                {/* Pagination */}
-                {/* <div className="flex justify-center gap-4 mt-4">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="bg-slate-500 text-white p-2 rounded-lg disabled:opacity-50"
-                    >
-                        Previous
-                    </button>
-                    <span className="text-lg font-semibold">
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="bg-slate-500 text-white p-2 rounded-lg disabled:opacity-50"
-                    >
-                        Next
-                    </button>
-                </div> */}
-            </div>
+            </div> 
         </div>
     );
-};
-
+}

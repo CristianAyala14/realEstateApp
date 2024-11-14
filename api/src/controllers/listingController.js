@@ -142,51 +142,58 @@ class listingController {
     }
     
     static getAllListings = async (req, res) => {
-        console.log(req.query);
-    
-        let { searchTerm, type, parking, furnished, offer, sort, order, limit, page } = req.query;
-
         try {
-            // Convertir los valores de los filtros booleanos a true/false o incluir todos los valores si no se especifican
-            offer = offer === "true" ? true : offer === "false" ? false : { $in: [true, false] };
-            furnished = furnished === "true" ? true : furnished === "false" ? false : { $in: [true, false] };
-            parking = parking === "true" ? true : parking === "false" ? false : { $in: [true, false] };
-            // Si type es "all", se permiten ambos valores "sale" y "rent"
-            type = type && type !== "all" ? type : { $in: ["sale", "rent"] };
-    
-            // Construcción del filtro de búsqueda flexible usando searchTerm y los otros filtros
+            //default behaviour of search filter
+            const limit = parseInt(req.query.limit) || 9;
+            const starIndex = parseInt(req.query.starIndex) || 1;
+
+            let offer = req.query.offer;
+            if(offer === undefined || offer === "false" ){
+                offer = { $in: [false, true]}
+            }
+            let furnished = req.query.furnished;
+            if(furnished === undefined || furnished === "false"){
+                furnished = { $in: [false, true]}
+            }
+            let parking = req.query.parking;
+            if(parking === undefined || parking === "false" ){
+                parking = { $in: [false, true]}
+            }
+            let type = req.query.type;
+            if(type === undefined || type === "all" ){
+                type = { $in: ["rent", "sale"]}
+            }
+            const searchTerm = req.query.searchTerm || "";
+            const sort = req.query.sort &&  ["createdAt", "regularPrice"].includes(req.query.sort)? req.query.sort : "createdAt";
+            const order = req.query.order === "asc" ? 1 : -1;
+
             let filter = {
-                name: { $regex: searchTerm || "", $options: "i" }, // Búsqueda por nombre, sin distinción de mayúsculas
+                name: { $regex: searchTerm, $options: "i" }, // Búsqueda por nombre, sin distinción de mayúsculas
                 offer,
                 furnished,
                 parking,
                 type
             };
-            sort = sort && ["createdAt", "regularPrice"].includes(sort) ? sort : "createdAt";
-            order = order && ["asc", "desc"].includes(order) ? order : "desc";
-                const options = {
-                limit: (parseInt(limit) > 0) ? parseInt(limit) : 15,
-                page: (parseInt(page) > 0) ? parseInt(page) : 1,
-                sort: { [sort]: order === "asc" ? 1 : -1 },
+            const options = {
+                page: starIndex,
+                limit: limit,
+                sort: { [sort]: order },
                 lean: true
             };
-    
-            // Logs de depuración para verificar filtros y opciones antes de la consulta
-            console.log("Filter:", filter);
-            console.log("Options:", options);
+            
             const listings = await listingDao.getAllListings(filter, options);
             // Respuesta exitosa con los datos paginados y detalles de paginación
             return res.status(200).json({
                 status: "success",
                 listings
+
             });
-    
+
         } catch (error) {
-            return res.status(500).json({
-                status: "error",
-                message: error.message || "Internal server error."
-            });
+            console.error("Error fetching listings:", error);
+            res.status(500).json({ message: "Failed to fetch listings" });
         }
+
     };
     
 }
