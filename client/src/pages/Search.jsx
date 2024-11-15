@@ -60,10 +60,11 @@ export default function Search() {
               const res = await searchListingReq(searchQuery);
               if (res.status === 200) {
                 setLoading(false);
-                setListings(res.listings)
                 if(res.listings.length > 5){
                     setShowMore(true);
                 }
+                //aca se hace un slice al array res.listings para que se guarde en listings.
+                setListings(res.listings.slice(0,4))
               }
             } catch (error) {
               setLoading(false);
@@ -74,6 +75,8 @@ export default function Search() {
     
     
     },[location.search]);
+
+
 
     const showMoreClick = async()=>{
         const startIndex = listings.length;
@@ -266,3 +269,6 @@ export default function Search() {
         </div>
     );
 }
+
+//estoy en la parte de resolver cuantos items mostrar en el buscador. es decir, 
+//los limit, page del backend y como mostrarlo aca 
