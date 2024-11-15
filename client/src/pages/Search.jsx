@@ -7,6 +7,7 @@ export default function Search() {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showMore, setShowMore] = useState(false);
     const [filters, setFilters] = useState({
         searchTerm: "",
         type: "all",
@@ -59,8 +60,10 @@ export default function Search() {
               const res = await searchListingReq(searchQuery);
               if (res.status === 200) {
                 setLoading(false);
-                console.log(res);
-                setListings(res.listings.docs)
+                setListings(res.listings)
+                if(res.listings.length > 5){
+                    setShowMore(true);
+                }
               }
             } catch (error) {
               setLoading(false);
@@ -72,7 +75,25 @@ export default function Search() {
     
     },[location.search]);
 
-    
+    const showMoreClick = async()=>{
+        const startIndex = listings.length;
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.set("startIndex", startIndex);
+        const searchQuery = urlParams.toString();
+        try {
+            const res = await searchListingReq(searchQuery)
+            if(res.status === 200){
+                console.log(res)
+                if(res.listings.docs < 5){
+                    
+                    setShowMore(false);
+                }
+                setListings([...listings, ...res.listings])
+            } 
+        } catch (error) {
+            console.log("Cannot get more listings." + error)
+        }
+    }
 
     
 
@@ -235,9 +256,12 @@ export default function Search() {
                     ) : (
                         listings.map((listing) => (
                             <ListingItem key={listing._id} listing={listing} />
-                        ))
+                        )) 
                     )}
                 </div>
+                {showMore && (
+                        <button onClick={showMoreClick} className="text-green-700 hover:underline p-7 text-center w-full">Show more</button>
+                    )}
             </div> 
         </div>
     );

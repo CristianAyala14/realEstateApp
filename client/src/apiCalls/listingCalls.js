@@ -80,7 +80,7 @@ export async function searchListingReq(searchQuery){
         const response = await axiosCall.get(`/listings/get?${searchQuery}`)
         return {
             status: response.status, 
-            listings: response.data.listings
+            listings: response.data.listings.docs
         };
     } catch (error) {
         if(error.response.data.message){

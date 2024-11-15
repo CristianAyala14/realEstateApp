@@ -145,7 +145,9 @@ class listingController {
         try {
             //default behaviour of search filter
             const limit = parseInt(req.query.limit) || 9;
-            const starIndex = parseInt(req.query.starIndex) || 1;
+            const skip = req.query.startIndex ? parseInt(req.query.startIndex) : null;
+            const page = skip === null ? parseInt(req.query.page) || 1 : null;
+
 
             let offer = req.query.offer;
             if(offer === undefined || offer === "false" ){
@@ -175,13 +177,16 @@ class listingController {
                 type
             };
             const options = {
-                page: starIndex,
+                page: page,
+                skip: skip,
                 limit: limit,
                 sort: { [sort]: order },
                 lean: true
             };
-            
+            console.log(filter)
+            console.log(options)
             const listings = await listingDao.getAllListings(filter, options);
+            console.log(listings.docs.length)
             // Respuesta exitosa con los datos paginados y detalles de paginación
             return res.status(200).json({
                 status: "success",
