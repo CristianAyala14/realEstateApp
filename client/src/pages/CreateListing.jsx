@@ -53,6 +53,7 @@ export default function CreateListing() {
       for(let i=0; i<files.length; i++){
         promises.push(uploadImages(files[i]));
       }
+      
       Promise.all(promises).then((urls)=>{
         setFormData({...formData, imageUrls: formData.imageUrls.concat(urls)})
         setimageUploadError(false);

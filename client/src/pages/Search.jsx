@@ -8,6 +8,7 @@ export default function Search() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showMore, setShowMore] = useState(false);
+    const [page, setPage] = useState(1); // Estado para la página actual
     const [filters, setFilters] = useState({
         searchTerm: "",
         type: "all",
@@ -60,11 +61,13 @@ export default function Search() {
               const res = await searchListingReq(searchQuery);
               if (res.status === 200) {
                 setLoading(false);
-                if(res.listings.length > 5){
+                setPage(res.page)
+                if(res.hasNextPage){
                     setShowMore(true);
+                }else{
+                    setShowMore(false)
                 }
-                //aca se hace un slice al array res.listings para que se guarde en listings.
-                setListings(res.listings.slice(0,4))
+                setListings(res.listings)
               }
             } catch (error) {
               setLoading(false);
@@ -78,25 +81,23 @@ export default function Search() {
 
 
 
-    const showMoreClick = async()=>{
-        const startIndex = listings.length;
+    const showMoreClick = async () => {
         const urlParams = new URLSearchParams(location.search);
-        urlParams.set("startIndex", startIndex);
-        const searchQuery = urlParams.toString();
+        const nextPage = page + 1; // Incrementa la página
+        urlParams.set("page", nextPage);
+
         try {
-            const res = await searchListingReq(searchQuery)
-            if(res.status === 200){
-                console.log(res)
-                if(res.listings.docs < 5){
-                    
-                    setShowMore(false);
-                }
-                setListings([...listings, ...res.listings])
-            } 
+            const searchQuery = urlParams.toString();
+            const res = await searchListingReq(searchQuery);
+            if (res.status === 200) {
+                setListings([...listings, ...res.listings]); // Concatena los nuevos resultados
+                setPage(res.page); // Actualiza la página actual
+                setShowMore(res.hasNextPage); // Habilita o deshabilita "Show More"
+            }
         } catch (error) {
-            console.log("Cannot get more listings." + error)
+            console.error("Error fetching more listings:", error);
         }
-    }
+    };
 
     
 
